@@ -1,0 +1,43 @@
+version: '3'
+
+volumes:
+  database_data:
+
+services:
+  database:
+    container_name: postgres
+    image: postgres
+    restart: always
+    environment:
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_USER: everlab
+      POSTGRES_DB: everlab
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U everlab -d everlab']
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    ports:
+      - '5432:5432'
+    volumes:
+      - database_data:/var/lib/postgresql/data
+  server:
+    depends_on:
+      - database
+    image: backend
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    environment:
+      DATABASE_URL: postgresql://everlab:postgres@postgres:5432/everlab
+    ports:
+      - '3000:3000'
+  frontend:
+    image: frontend
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    environment:
+      VITE_API_URL: http://localhost:3000/
+    ports:
+      - '5173:5173'

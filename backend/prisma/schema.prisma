@@ -1,0 +1,26 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model metrics {
+  id               Int      @id @default(autoincrement())
+  name             String
+  oruSonicCodes    String[]
+  oruSonicUnits    String[]
+  units            String[]
+  diagnostic       String?
+  diagnosticGroups String?
+  minAge           Int?
+  maxAge           Int?
+  gender           String?
+  standardLower    Float?
+  standardHigher   Float?
+  everlabLower     Float?
+  everlabHigher    Float?
+  createdAt        DateTime @default(now())
+}
